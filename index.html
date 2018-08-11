@@ -4,14 +4,16 @@
         <meta charset="UTF-8">
         <title>Twitch Extension Insight Graphs</title>
 
-        <script src="https://d3js.org/d3.v5.min.js"></script>
-        <script src="https://d3js.org/d3-dsv.v1.min.js"></script>
-        <script src="https://d3js.org/d3-array.v1.min.js"></script>
-        <script src="https://d3js.org/d3-time.v1.min.js"></script>
-        <script src="https://d3js.org/d3-time-format.v2.min.js"></script>
-        <script src="https://d3js.org/d3-color.v1.min.js"></script>
-        <script src="https://d3js.org/d3-interpolate.v1.min.js"></script>
-        <script src="https://d3js.org/d3-scale-chromatic.v1.min.js"></script>
+        <meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self' https://d3js.org; child-src 'none'; disown-opener; frame-ancestors 'none'">
+
+        <script src="https://d3js.org/d3.v5.min.js" integrity="sha384-xt54w7/ptFmlL1rMBfoLoM/T0iHjAzuv47CPmW5KtXrv5iphOBlJxMOSkOg0gsmF" crossorigin="anonymous"></script>
+        <script src="https://d3js.org/d3-dsv.v1.min.js" integrity="sha384-p+GIf9eVxqBv410Bkm3pQVrU7ucGyNRe59NbXGjeIJaoTYSFCcJuLszMKisjl5la" crossorigin="anonymous"></script>
+        <script src="https://d3js.org/d3-array.v1.min.js" integrity="sha384-c+16cUIc0b/tqEZ9mRvDfI/r1Dg1Yq3JpWgZFW4mjN2QU7XXFWVB90PDFlV8SIAm" crossorigin="anonymous"></script>
+        <script src="https://d3js.org/d3-time.v1.min.js" integrity="sha384-0No6JxU7FWxUKhsGBICltzzI8xcNhAEtpkiG6q2XLOm2wSRfgnEOgxy0yljjESzv" crossorigin="anonymous"></script>
+        <script src="https://d3js.org/d3-time-format.v2.min.js" integrity="sha384-cV+UVh1fewxYgADHl66JZYtn4ikYvn/KVEgy9CbVce8eylaBlBMTRUTq81mBpyo5" crossorigin="anonymous"></script>
+        <script src="https://d3js.org/d3-color.v1.min.js" integrity="sha384-9tw4w0cBdMlBlwLwU0Auy+X9MQK7kqf6iNT2udyr48g2NE5vQtG1drLmr+6R72gV" crossorigin="anonymous"></script>
+        <script src="https://d3js.org/d3-interpolate.v1.min.js" integrity="sha384-e1OU+Cf1iSj43o8XkcQcXhA0BjarwXu8+PeZEdvAOHg52jmjEKA2ZABR14/AzT6n" crossorigin="anonymous"></script>
+        <script src="https://d3js.org/d3-scale-chromatic.v1.min.js" integrity="sha384-NzwbfDM7riUT2ACvyCmeXifwQgKSGyc48ZBO9CmhnHQM4NvkLW09qvrxgngVecJ7" crossorigin="anonymous"></script>
         <script src="index.js" defer></script>
     </head>
     <body>
