@@ -109,7 +109,7 @@ if(location.hash.length > 1 || localStorage.getItem("token")) {
         //TODO instead just request a new url when the extension is selected.
         setTimeout(() => {
             for(const child of extensionSelect.children) {
-                if(!child.selected) {
+                if(!child.selected && child.value) {
                     child.remove();
                 }
             }
