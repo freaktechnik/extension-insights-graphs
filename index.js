@@ -3,7 +3,14 @@ const ignoredCols = [
         'Extension Name',
         'Extension Client ID'
     ],
-    reader = new FileReader();
+    reader = new FileReader(),
+    svg = d3.select("svg"),
+    margin = {top: 20, right: 20, bottom: 30, left: 50},
+    width = +svg.attr("width") - margin.left - margin.right,
+    height = +svg.attr("height") - margin.top - margin.bottom,
+    x = d3.scaleTime().rangeRound([0, width]),
+    y = d3.scaleLinear().rangeRound([height, 0]),
+    parseTime = d3.timeFormat("%d-%b-%y");
 
 reader.addEventListener("load", () => {
     const data = d3.csvParse(reader.result);
@@ -23,15 +30,9 @@ reader.addEventListener("load", () => {
         if(!statSelect.value) {
             return;
         }
-        const svg = d3.select("svg"),
-            margin = {top: 20, right: 20, bottom: 30, left: 50},
-            width = +svg.attr("width") - margin.left - margin.right,
-            height = +svg.attr("height") - margin.top - margin.bottom,
-            g = svg.append("g").attr("transform", "translate(" + margin.left + "," + margin.top + ")"),
-            parseTime = d3.timeFormat("%d-%b-%y"),
-            x = d3.scaleTime().rangeRound([0, width]),
-            y = d3.scaleLinear().rangeRound([height, 0]),
+        const g = svg.append("g").attr("transform", "translate(" + margin.left + "," + margin.top + ")"),
             line = d3.line().x((d) => parseTime(d.Date)).y((d) => d[statSelect.value]);
+        console.log(data.map((d) => parseTime(d.Date)));
         x.domain(d3.extent(data, (d) => d.Date, parseTime));
         y.domain(d3.extent(data, (d) => d[statSelect.value]));
         g.append("g")
