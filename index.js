@@ -32,9 +32,13 @@ reader.addEventListener("load", () => {
         }
         const g = svg.append("g").attr("transform", "translate(" + margin.left + "," + margin.top + ")"),
             line = d3.line().x((d) => parseTime(d.Date)).y((d) => d[statSelect.value]);
-        console.log(data.map((d) => parseTime(d.Date)));
         x.domain(d3.extent(data, (d) => d.Date, parseTime));
         y.domain(d3.extent(data, (d) => d[statSelect.value]));
+
+        g.append("g")
+            .attr("transform", "translate(0," + height + ")")
+            .call(d3.axisBottom(x));
+
         g.append("g")
                 .call(d3.axisLeft(y))
             .append("text")
