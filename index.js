@@ -23,7 +23,7 @@ reader.addEventListener("load", () => {
             width = +svg.attr("width") - margin.left - margin.right,
             height = +svg.attr("height") - margin.top - margin.bottom,
             g = svg.append("g").attr("transform", "translate(" + margin.left + "," + margin.top + ")"),
-            parseTime = d3.timeParse("%d-%b-%y"),
+            parseTime = d3.timeFormat("%d-%b-%y"),
             x = d3.scaleTime().rangeRound([0, width]),
             y = d3.scaleLinear().rangeRound([height, 0]),
             line = d3.line().x((d) => parseTime(d.Date)).y((d) => d[statSelect.value]);
