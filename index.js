@@ -58,7 +58,7 @@ reader.addEventListener("load", () => {
     x.domain(d3.extent(data, (d) => parseTime(d.Date)));
     const mapLine = (d) => line(data.map((p) => ({
         Date: parseTime(p.Date),
-        value: parseInt(p[d], 10)
+        value: parseFloat(p[d])
     })));
     activeLines.length = 0;
     const updateGraph = () => {
@@ -118,8 +118,8 @@ reader.addEventListener("load", () => {
                 activeLines.splice(activeLines.indexOf(d), 1);
                 if(activeLines.length) {
                     y.domain([
-                        d3.min(activeLines, (e) => d3.min(data, (p) => p[e])),
-                        d3.max(activeLines, (e) => d3.max(data, (p) => p[e]))
+                        d3.min(activeLines, (e) => d3.min(data, (p) => parseFloat(p[e]))),
+                        d3.max(activeLines, (e) => d3.max(data, (p) => parseFloat(p[e])))
                     ]);
                 }
                 updateGraph();
@@ -129,7 +129,7 @@ reader.addEventListener("load", () => {
         if(!statSelect.value || activeLines.length >= d3.schemeCategory10.length || activeLines.includes(statSelect.value)) {
             return;
         }
-        const yExtent = d3.extent(data, (d) => parseInt(d[statSelect.value], 10));
+        const yExtent = d3.extent(data, (d) => parseFloat(d[statSelect.value]));
         if(activeLines.length > 0) {
             const oldExtent = y.domain();
             y.domain([ Math.min(0, yExtent[0], oldExtent[0]), Math.max(yExtent[1], oldExtent[1]) ]);
