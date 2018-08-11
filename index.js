@@ -118,8 +118,8 @@ reader.addEventListener("load", () => {
                 activeLines.splice(activeLines.indexOf(d), 1);
                 if(activeLines.length) {
                     y.domain([
-                        d3.min(activeLines, (d) => d3.min(data, (p) => p[d])),
-                        d3.max(activeLines, (d) => d3.max(data, (p) => p[d]))
+                        d3.min(activeLines, (e) => d3.min(data, (p) => p[e])),
+                        d3.max(activeLines, (e) => d3.max(data, (p) => p[e]))
                     ]);
                 }
                 updateGraph();
