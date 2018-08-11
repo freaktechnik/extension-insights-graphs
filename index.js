@@ -23,6 +23,9 @@ if(location.hash.length > 1 || localStorage.getItem("token")) {
         throw new Error("Invalid application state");
     }
 
+    document.getElementById("login").hidden = true;
+    document.getElementById("graphs").hidden = false;
+
     const extensionSelect = document.getElementById("extension");
     extensionSelect.addEventListener("change", () => {
         if(extensionSelect.value) {
