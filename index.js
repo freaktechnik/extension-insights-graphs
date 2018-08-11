@@ -35,7 +35,8 @@ if(location.hash.length > 1 || localStorage.getItem("token")) {
     const extensionSelect = document.getElementById("extension");
     extensionSelect.addEventListener("change", () => {
         if(extensionSelect.value) {
-            fetch(extensionSelect.value).then((response) => {
+            //BAD IDEA
+            fetch("https://crossorigin.me/" + extensionSelect.value).then((response) => {
                 if(response.ok && response.status === 200) {
                     return response.text();
                 }
