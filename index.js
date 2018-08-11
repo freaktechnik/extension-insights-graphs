@@ -10,7 +10,7 @@ const ignoredCols = [
     height = +svg.attr("height") - margin.top - margin.bottom,
     x = d3.scaleTime().rangeRound([0, width]),
     y = d3.scaleLinear().rangeRound([height, 0]),
-    parseTime = d3.timeFormat("%d-%b-%y");
+    parseTime = d3.timeFormat("%y-%b-%d");
 
 reader.addEventListener("load", () => {
     const data = d3.csvParse(reader.result);
