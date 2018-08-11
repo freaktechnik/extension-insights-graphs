@@ -92,10 +92,10 @@ if(location.hash.length > 1 || localStorage.getItem("token")) {
         throw new Error(`HTTP error ${response.statusText}`);
     }).then((json) => {
         //TODO pagination
-        console.log(json);
         for(const extension in json.data) {
             if(extension.type === "overview_v2") {
-                const opt = new Option(extension.extension_id, extension.URL)
+                console.log(extension);
+                const opt = new Option(extension.extension_id, extension.URL);
                 extensionSelect.append(opt);
             }
         }
