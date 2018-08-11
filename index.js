@@ -24,68 +24,121 @@ const ignoredCols = [
     activeLines = [];
 
 reader.addEventListener("load", () => {
-    const data = d3.csvParse(reader.result);
+    let data = d3.csvParse(reader.result),
+        lastIndexWithData = 0;
+    for(const d in data) {
+        const o = data[d];
+        let hadSomeData = false;
+        for(const i in o) {
+            if(!ignoredCols.includes(i)) {
+                if(o[i] > 0) {
+                    hadSomeData = true;
+                    lastIndexWithData = parseInt(d, 10);
+                    break;
+                }
+            }
+        }
+        if(!hadSomeData) {
+            break;
+        }
+    }
+    const printableCols = data.columns.filter((c) => !ignoredCols.includes(c));
+    data = data.slice(0, Math.min(lastIndexWithData + 2, data.length));
     const statSelect = document.getElementById("stat");
     for(const child of statSelect.children) {
         if(child.value) {
             child.remove();
         }
     }
-    const printableCols = data.columns.filter((c) => !ignoredCols.includes(c));
     for(const column of printableCols) {
         const opt = new Option(column);
         statSelect.append(opt);
     }
     color.domain(printableCols);
+    x.domain(d3.extent(data, (d) => parseTime(d.Date)));
     const mapLine = (d) => line(data.map((p) => ({
         Date: parseTime(p.Date),
         value: parseInt(p[d], 10)
     })));
     activeLines.length = 0;
-    lines.selectAll('.line-group')
-        .data(printableCols).enter()
-        .append("path")
-            .attr('class', 'line-group')
-            .attr("fill", "none")
-            .attr("stroke", (d) => color(d))
-            .attr("stroke-linejoin", "round")
-            .attr("stroke-linecap", "round")
-            .attr("stroke-width", 1.5)
-            .attr("data-legend", (d) => d)
-            .attr('d', mapLine);
-    let dataL = 0;
-    const legends = legend.selectAll('.legend-entry')
-        .data(printableCols).enter()
-            .append('g')
-            .attr('class', 'legend-entry')
-            .attr('transform', (d, i) => `translate(0,${i * 20})`);
-    legends.append('rect')
-        .attr('x', 0)
-        .attr('y', 0)
-        .attr('width', 10)
-        .attr('height', 10)
-        .attr('fill', color)
-    legends.append('text')
-        .attr('x', 20)
-        .attr('y', 10)
-        .text((d) => d);
-    x.domain(d3.extent(data, (d) => parseTime(d.Date)));
-    statSelect.addEventListener("change", () => {
-        if(!statSelect.value) {
-            return;
-        }
-        const yExtent = d3.extent(data, (d) => parseInt(d[statSelect.value], 10)),
-            oldExtent = y.domain();
-        y.domain([ Math.min(yExtent[0], oldExtent[0]), Math.max(yExtent[1], oldExtent[1]) ]);
-        activeLines.push(statSelect.value);
-        lines.selectAll('.line-group')
-            .data(activeLines)
-            .attr('d', mapLine);
+    const updateGraph = () => {
+        const lGroup = lines.selectAll('.line-group')
+            .data(activeLines, (d) => d);
+        lGroup.exit().remove();
+        lGroup.enter()
+            .append("path")
+                .attr('class', 'line-group')
+                .attr("fill", "none")
+                .attr("stroke", color)
+                .attr("stroke-linejoin", "round")
+                .attr("stroke-linecap", "round")
+                .attr("stroke-width", 1.5)
+                .attr("data-legend", (d) => d)
+                .attr('d', mapLine);
+        lGroup.attr('d', mapLine)
 
         xAxis.call(d3.axisBottom(x));
         yAxis.call(d3.axisLeft(y));
 
-        legend.selectAll('.legend-entry').data(activeLines);
+        const legends = legend.selectAll('.legend-entry')
+            .data(activeLines, (d) => d);
+        legends.exit().remove();
+        const newLegends = legends.enter()
+                .append('g')
+                .attr('class', 'legend-entry')
+                .attr('transform', (d, i) => `translate(0,${i * 20})`)
+                .on('mouseover', function(d) {
+                    d3.select(this).select('.remove').style('opacity', '1.0');
+                })
+                .on('mouseout', function(d) {
+                    d3.select(this).select('.remove').style('opacity', '0.0');
+                });
+        legends.attr('transform', (d, i) => `translate(0,${i * 20})`);
+        newLegends.append('rect')
+            .attr('x', 0)
+            .attr('y', 0)
+            .attr('width', 10)
+            .attr('height', 10)
+            .attr('fill', color)
+        newLegends.append('text')
+            .attr('x', 20)
+            .attr('y', 10)
+            .text((d) => d);
+        newLegends.append('text')
+            .attr('x', 0)
+            .attr('y', 10)
+            .attr('width', 10)
+            .attr('height', 10)
+            .attr('class', 'remove')
+            .text('🗙')
+            .style('opacity', '0.0')
+            .style('font-size', '10px')
+            .style('cursor', 'pointer')
+            .on('click', (d) => {
+                activeLines.splice(activeLines.indexOf(d), 1);
+                if(activeLines.length) {
+                    y.domain([
+                        d3.min(activeLines, (d) => d3.min(data, (p) => p[d])),
+                        d3.max(activeLines, (d) => d3.max(data, (p) => p[d]))
+                    ]);
+                }
+                updateGraph();
+            });
+    };
+    statSelect.addEventListener("change", () => {
+        if(!statSelect.value || activeLines.length >= d3.schemeCategory10.length || activeLines.includes(statSelect.value)) {
+            return;
+        }
+        const yExtent = d3.extent(data, (d) => parseInt(d[statSelect.value], 10));
+        if(activeLines.length > 0) {
+            const oldExtent = y.domain();
+            y.domain([ Math.min(0, yExtent[0], oldExtent[0]), Math.max(yExtent[1], oldExtent[1]) ]);
+        }
+        else {
+            y.domain(yExtent);
+        }
+        activeLines.push(statSelect.value);
+        updateGraph();
     });
 });
 
