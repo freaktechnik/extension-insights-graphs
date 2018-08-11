@@ -50,7 +50,7 @@ reader.addEventListener("load", () => {
     });
 });
 
-doucment.getElementById("source").addEventListener("input", (e) => {
+document.getElementById("source").addEventListener("input", (e) => {
     const file = e.target.files[0];
     reader.readAsText(file);
 });
