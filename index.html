@@ -9,21 +9,25 @@
         <script src="https://d3js.org/d3-array.v1.min.js"></script>
         <script src="https://d3js.org/d3-time.v1.min.js"></script>
         <script src="https://d3js.org/d3-time-format.v2.min.js"></script>
+        <script src="https://d3js.org/d3-color.v1.min.js"></script>
+        <script src="https://d3js.org/d3-interpolate.v1.min.js"></script>
+        <script src="https://d3js.org/d3-scale-chromatic.v1.min.js"></script>
         <script src="index.js" defer></script>
     </head>
     <body>
         <section id="graphs">
             <section>
-                <input id="source" type="file" accept="text/csv">
+                <label for="source">Stats CSV:</label><input id="source" type="file" accept="text/csv">
             </section>
             <section>
-                <select id="stat">
+                <label for="stat">Add Line:</label><select id="stat">
                     <option value="">Select data line</option>
                 </select>
             </section>
             <svg width="960" height="500"></svg>
         </section>
         <footer>
+            <p>Legend is a big WIP. And removing lines again, too</p>
             <p>Press F12 to see errors</p>
         </footer>
     </body>
