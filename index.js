@@ -43,7 +43,7 @@ if(location.hash.length > 1 || localStorage.getItem("token")) {
             }).then((csv) => {
                 const data = d3.csvParse(csv);
                 const statSelect = document.getElementById("stat");
-                for(const child of statSelect.childElements) {
+                for(const child of statSelect.children) {
                     child.remove();
                 }
                 for(const column of data.columns) {
@@ -108,7 +108,7 @@ if(location.hash.length > 1 || localStorage.getItem("token")) {
         // URLs are no longer valid after 1 minute.
         //TODO instead just request a new url when the extension is selected.
         setTimeout(() => {
-            for(const child of extensionSelect.childElements) {
+            for(const child of extensionSelect.children) {
                 if(!child.selected) {
                     child.remove();
                 }
