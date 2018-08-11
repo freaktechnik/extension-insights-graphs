@@ -113,6 +113,6 @@ else {
     const state = Math.floor(Math.random() * Number.MAX_SAFE_INTEGER).toString(HEX);
     localStorage.setItem("state", state);
     document.querySelector("#login button").addEventListener("click", () => {
-        window.location = `https://id.twitch.tv/oauth2/authorize?client_id=${clientId}&redirect_uri=${window.location}&response_type=token&scope=analytics:read:extensions&state=${state}`;
+        window.location = `https://id.twitch.tv/oauth2/authorize?client_id=${clientId}&redirect_uri=${location.origin}${location.pathname}${location.search}&response_type=token&scope=analytics:read:extensions&state=${state}`;
     });
 }
