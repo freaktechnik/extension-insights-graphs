@@ -27,7 +27,7 @@ reader.addEventListener("load", () => {
             x = d3.scaleTime().rangeRound([0, width]),
             y = d3.scaleLinear().rangeRound([height, 0]),
             line = d3.line().x((d) => parseTime(d.Date)).y((d) => d[statSelect.value]);
-        x.domain(d3.extent(data, (d) => d.Date, parseTiem));
+        x.domain(d3.extent(data, (d) => d.Date, parseTime));
         y.domain(d3.extent(data, (d) => d[statSelect.value]));
         g.append("g")
                 .call(d3.axisLeft(y))
