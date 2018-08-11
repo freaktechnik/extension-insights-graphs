@@ -26,7 +26,7 @@ const ignoredCols = [
 reader.addEventListener("load", () => {
     let data = d3.csvParse(reader.result),
         lastIndexWithData = 0;
-    for(const d in data) {
+    for(let d = data.length - 1; d >= 0; --d) {
         const o = data[d];
         let hadSomeData = false;
         for(const i in o) {
@@ -38,7 +38,7 @@ reader.addEventListener("load", () => {
                 }
             }
         }
-        if(!hadSomeData) {
+        if(hadSomeData) {
             break;
         }
     }
