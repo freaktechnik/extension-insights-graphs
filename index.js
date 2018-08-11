@@ -77,7 +77,7 @@ if(location.hash.length > 1 || localStorage.getItem("token")) {
                         .attr("stroke-width", 1.5)
                         .attr("d", line);
                 });
-            });
+            }).catch(console.error);
         }
     });
 
@@ -92,6 +92,7 @@ if(location.hash.length > 1 || localStorage.getItem("token")) {
         throw new Error(`HTTP error ${response.statusText}`);
     }).then((json) => {
         //TODO pagination
+        console.log(json);
         for(const extension in json.data) {
             if(extension.type === "overview_v2") {
                 const opt = new Option(extension.extension_id, extension.URL)
@@ -107,7 +108,7 @@ if(location.hash.length > 1 || localStorage.getItem("token")) {
                 }
             }
         }, 60000);
-    });
+    }).catch(console.error);
 }
 else {
     const state = Math.floor(Math.random() * Number.MAX_SAFE_INTEGER).toString(HEX);
