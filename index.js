@@ -10,7 +10,7 @@ if(location.hash.length > 1 || localStorage.getItem("token")) {
     let token = localStorage.getItem('token');
     if(localStorage.getItem("state") && location.hash.length > 1) {
         const params = new URLSearchParams(location.hash.substr(1));
-        if(params.get('state') === localStorage.getItem('state') && params.get('scope') === 'anayltics:read:extensions') {
+        if(params.get('state') === localStorage.getItem('state') && params.get('scope') === 'analytics:read:extensions') {
             token = params.get('access_token');
             localStorage.setItem("token", token);
             localStorage.removeItem('state');
