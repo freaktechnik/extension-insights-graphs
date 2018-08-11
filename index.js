@@ -26,6 +26,12 @@ if(location.hash.length > 1 || localStorage.getItem("token")) {
     document.getElementById("login").hidden = true;
     document.getElementById("graphs").hidden = false;
 
+    document.getElementById("logout").addEventListener("click", () => {
+        localStorage.removeItem("token");
+        location.hash = '';
+        location.reload();
+    });
+
     const extensionSelect = document.getElementById("extension");
     extensionSelect.addEventListener("change", () => {
         if(extensionSelect.value) {
