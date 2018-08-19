@@ -6,7 +6,7 @@ const HEX = 16,
     login = document.getElementById("login"),
     refresh = document.getElementById("refresh"),
     list = document.querySelector("#extensions ul"),
-    populateList = () => {
+    populateList = (token) => {
         fetch(`https://api.twitch.tv/helix/analytics/extensions?type=overview_v2`, {
             headers: {
                 Authorization: `Bearer ${token}`
@@ -61,7 +61,7 @@ if(location.hash.length > 1 || localStorage.getItem(tokenItem)) {
     authorized = true;
     login.textContent = "Logout";
 
-    populateList();
+    populateList(token);
 }
 
 login.addEventListener("click", () => {
@@ -81,7 +81,7 @@ login.addEventListener("click", () => {
 
 refresh.addEventListener("click", () => {
     if(authorized) {
-        populateList();
+        populateList(localStorage.getItem(tokenItem));
     }
 }, {
     passive: true
