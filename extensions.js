@@ -29,6 +29,7 @@ const HEX = 16,
                     list.append(item);
                 }
             }
+            refresh.hidden = true;
             // URLs are no longer valid after 1 minute.
             setTimeout(() => {
                 while(list.firstElementChild) {
