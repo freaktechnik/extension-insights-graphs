@@ -4,7 +4,40 @@ const HEX = 16,
     stateItem = 'state',
     scopes = 'analytics:read:extensions',
     login = document.getElementById("login"),
-    list = document.querySelector("#extensions ul");
+    refresh = document.getElementById("refresh"),
+    list = document.querySelector("#extensions ul"),
+    populateList = () => {
+        fetch(`https://api.twitch.tv/helix/analytics/extensions?type=overview_v2`, {
+            headers: {
+                Authorization: `Bearer ${token}`
+            }
+        }).then((response) => {
+            if(response.ok && response.status === 200) {
+                return response.json();
+            }
+            throw new Error(`HTTP error ${response.statusText}`);
+        }).then((json) => {
+            //TODO pagination
+            for(const extension of json.data) {
+                if(extension.type === "overview_v2") {
+                    const item = document.createElement("li"),
+                        link = document.createElement("a");
+                    link.href = extension.URL;
+                    link.download = true;
+                    link.textContent = extension.extension_id;
+                    item.append(link);
+                    list.append(item);
+                }
+            }
+            // URLs are no longer valid after 1 minute.
+            setTimeout(() => {
+                while(list.firstElementChild) {
+                    list.firstElementChild.remove();
+                }
+                refresh.hidden = false;
+            }, 60000);
+        }).catch(console.error);
+    };
 let authorized = false;
 
 if(location.hash.length > 1 || localStorage.getItem(tokenItem)) {
@@ -25,38 +58,9 @@ if(location.hash.length > 1 || localStorage.getItem(tokenItem)) {
     }
 
     authorized = true;
-    login.textContent = "logout";
+    login.textContent = "Logout";
 
-    fetch(`https://api.twitch.tv/helix/analytics/extensions?type=overview_v2`, {
-        headers: {
-            Authorization: `Bearer ${token}`
-        }
-    }).then((response) => {
-        if(response.ok && response.status === 200) {
-            return response.json();
-        }
-        throw new Error(`HTTP error ${response.statusText}`);
-    }).then((json) => {
-        //TODO pagination
-        for(const extension of json.data) {
-            if(extension.type === "overview_v2") {
-                const item = document.createElement("li"),
-                    link = document.createElement("a");
-                link.href = extension.URL;
-                link.download = true;
-                link.textContent = extension.extension_id;
-                item.append(link);
-                list.append(item);
-            }
-        }
-        // URLs are no longer valid after 1 minute.
-        //TODO have a button to refresh the extensions afterward.
-        setTimeout(() => {
-            while(list.firstElementChild) {
-                list.firstElementChild.remove();
-            }
-        }, 60000);
-    }).catch(console.error);
+    populateList();
 }
 
 login.addEventListener("click", () => {
@@ -70,4 +74,14 @@ login.addEventListener("click", () => {
         localStorage.setItem(stateItem, state);
         window.location = `https://id.twitch.tv/oauth2/authorize?client_id=${clientId}&redirect_uri=${location.origin}${location.pathname}${location.search}&response_type=token&scope=${scopes}&state=${state}`;
     }
+}, {
+    passive: true
+});
+
+refresh.addEventListener("click", () => {
+    if(authorized) {
+        populateList();
+    }
+}, {
+    passive: true
 });
