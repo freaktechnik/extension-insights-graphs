@@ -1,0 +1,73 @@
+const HEX = 16,
+    clientId = '1x59tb2nluf1dgnx5aqazviiibft56',
+    tokenItem = 'token',
+    stateItem = 'state',
+    scopes = 'analytics:read:extensions',
+    login = document.getElementById("login"),
+    list = document.querySelector("#extensions ul");
+let authorized = false;
+
+if(location.hash.length > 1 || localStorage.getItem(tokenItem)) {
+    let token = localStorage.getItem(tokenItem);
+    if(location.hash.length > 1 && localStorage.getItem(stateItem)) {
+        const params = new URLSearchParams(location.hash.substr(1));
+        if(params.get('state') === localStorage.getItem(stateItem) && params.get('scope') === scopes) {
+            token = params.get('access_token');
+            localStorage.setItem(tokenItem, token);
+            localStorage.removeItem(stateItem);
+        }
+        else {
+            throw new Error("Couldn't authorize");
+        }
+    }
+    else if(!token) {
+        throw new Error("Invalid application state");
+    }
+
+    authorized = true;
+    login.textContent = "logout";
+
+    fetch(`https://api.twitch.tv/helix/analytics/extensions?type=overview_v2`, {
+        headers: {
+            Authorization: `Bearer ${token}`
+        }
+    }).then((response) => {
+        if(response.ok && response.status === 200) {
+            return response.json();
+        }
+        throw new Error(`HTTP error ${response.statusText}`);
+    }).then((json) => {
+        //TODO pagination
+        for(const extension of json.data) {
+            if(extension.type === "overview_v2") {
+                const item = document.createElement("li"),
+                    link = document.createElement("a");
+                link.href = extension.URL;
+                link.download = true;
+                link.textContent = extension.extension_id;
+                item.append(link);
+                list.append(item);
+            }
+        }
+        // URLs are no longer valid after 1 minute.
+        //TODO have a button to refresh the extensions afterward.
+        setTimeout(() => {
+            while(list.firstElementChild) {
+                list.firstElementChild.remove();
+            }
+        }, 60000);
+    }).catch(console.error);
+}
+
+login.addEventListener("click", () => {
+    if(authorized) {
+        localStorage.removeItem(tokenItem);
+        location.hash = '';
+        location.reload();
+    }
+    else {
+        const state = Math.floor(Math.random() * Number.MAX_SAFE_INTEGER).toString(HEX);
+        localStorage.setItem(stateItem, state);
+        window.location = `https://id.twitch.tv/oauth2/authorize?client_id=${clientId}&redirect_uri=${location.origin}${location.pathname}${location.search}&response_type=token&scope=${scopes}&state=${state}`;
+    }
+});
