@@ -7,7 +7,7 @@ const HEX = 16,
     refresh = document.getElementById("refresh"),
     list = document.querySelector("#extensions ul"),
     populateList = (token) => {
-        fetch(`https://api.twitch.tv/helix/analytics/extensions?type=overview_v2`, {
+        fetch(`https://api.twitch.tv/helix/analytics/extensions?type=overview_v2&first=100`, {
             headers: {
                 Authorization: `Bearer ${token}`
             }
@@ -17,7 +17,7 @@ const HEX = 16,
             }
             throw new Error(`HTTP error ${response.statusText}`);
         }).then((json) => {
-            //TODO pagination
+            //TODO pagination (yeah, I'll do that when someone complains that has more than 100 extensions...)
             for(const extension of json.data) {
                 if(extension.type === "overview_v2") {
                     const item = document.createElement("li"),
