@@ -56,7 +56,7 @@ reader.addEventListener("load", () => {
         statSelect.append(opt);
     }
     color.domain(printableCols);
-    x.domain(d3.extent(data, (d) => parseTime(d.Date) || legacyParseTime(d.Date));
+    x.domain(d3.extent(data, (d) => parseTime(d.Date) || legacyParseTime(d.Date)));
     const mapLine = (d) => line(data.map((p) => ({
         Date: parseTime(p.Date) || legacyParseTime(d.Date),
         value: parseFloat(p[d])
