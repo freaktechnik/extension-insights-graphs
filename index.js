@@ -8,6 +8,7 @@ const ignoredCols = [
     margin = {top: 20, right: 20, bottom: 30, left: 50},
     width = +svg.attr("width") - margin.left - margin.right,
     height = +svg.attr("height") - margin.top - margin.bottom,
+    parseTime = d3.utcParse("%Y-%m-%d"),
     x = d3.scaleTime().rangeRound([0, width]),
     y = d3.scaleLinear().rangeRound([height, 0]),
     g = svg.append("g").attr("transform", "translate(" + margin.left + "," + margin.top + ")"),
@@ -54,9 +55,9 @@ reader.addEventListener("load", () => {
         statSelect.append(opt);
     }
     color.domain(printableCols);
-    x.domain(d3.extent(data, (d) => Date.UTC(d.Date)));
+    x.domain(d3.extent(data, (d) => parseTime(d.Date)));
     const mapLine = (d) => line(data.map((p) => ({
-        Date: Date.UTC(p.Date),
+        Date: parseTime(p.Date),
         value: parseFloat(p[d])
     })));
     activeLines.length = 0;
