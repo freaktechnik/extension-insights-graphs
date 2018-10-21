@@ -48,10 +48,11 @@ reader.addEventListener("load", () => {
     // calculate maths
     const installs = document.getElementById("installs");
     let estimatedInstalls = 0;
-    for(const row in data) {
+    for(const row of data) {
         estimatedInstalls += parseInt(row['Installs'], 10) - parseInt(row['Uninstalls'], 10);
     }
     installs.value = estimatedInstalls;
+    //TODO ensure it's at least current unique active channels
 
     // undraw graphs and all that.
     const statSelect = document.getElementById("stat");
