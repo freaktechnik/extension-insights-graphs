@@ -44,6 +44,16 @@ reader.addEventListener("load", () => {
     }
     const printableCols = data.columns.filter((c) => !ignoredCols.includes(c));
     data = data.slice(0, Math.min(lastIndexWithData + 2, data.length));
+
+    // calculate maths
+    const installs = document.getElementById("installs");
+    let estimatedInstalls = 0;
+    for(const row in data) {
+        estimatedInstalls += parseInt(row['Installs'], 10) - parseInt(row['Uninstalls'], 10);
+    }
+    installs.value = estimatedInstalls;
+
+    // undraw graphs and all that.
     const statSelect = document.getElementById("stat");
     for(const child of statSelect.children) {
         if(child.value) {
