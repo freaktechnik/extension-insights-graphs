@@ -21,7 +21,27 @@ const ignoredCols = [
     line = d3.line().x((d) => x(d.Date)).y((d) => y(d.value)),
     lines = g.append('g').attr('class', 'lines'),
     legend = g.append('g').attr('class', 'legend'),
-    activeLines = [];
+    activeLines = [],
+    getLiveChannels = (clientID, count = 0, cursor) => {
+        return fetch(`https://api.twitch.tv/extensions/${clientID}/live_activated_channels?cursor=${cursor}`, {
+            headers: {
+                "Client-ID": clientID
+            }
+        }).then((response) => {
+            if(response.ok && response.status === 200) {
+                return response.json();
+            }
+            throw new Error(`HTTP error ${response.statusText}`);
+        }).then((json) => {
+            count += json.channels.length;
+            if(json.cursor) {
+                return getLiveChannels(clientID, count, json.cursor);
+            }
+            else {
+                return count;
+            }
+        });
+    };
 
 reader.addEventListener("load", () => {
     let data = d3.csvParse(reader.result),
@@ -60,6 +80,10 @@ reader.addEventListener("load", () => {
     document.getElementById("installs").value = estimatedInstalls;
     //TODO ensure it's at least current unique active channels
     document.getElementById("linkedAccounts").value = estimatedLinkedAccounts;
+
+    getLiveChannels(data[0]['Extension Client ID']).then((count) => {
+        document.getElementById("liveCount").value = count;
+    });
 
     // undraw graphs and all that.
     const statSelect = document.getElementById("stat");

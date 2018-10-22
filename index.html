@@ -19,7 +19,8 @@
     </head>
     <body>
         <section id="extensions">
-            <strong>Quick CSV download links:</strong> <button id="login">Login</button> <button id="refresh" hidden>Refresh</button>
+            <h2>Quick CSV download links</h2>
+            <p><button id="login">Login</button> <button id="refresh" hidden>Refresh</button></p>
             <ul>
             </ul>
         </section>
@@ -40,9 +41,10 @@
             <p>Some maths 7 asked me to do:</p>
             <p>Estimated installs: <output id="installs"></p>
             <p>Estimated linked accounts: <output id="linkedAccounts"></p>
-            <!-- add a counter of channels currently live with extension -->
+            <p>Currently live channels: <output id="liveCount"></p>
         </section>
         <footer>
+            <h2>Info</h2>
             <p>Press F12 to see errors</p>
             <p>This is fully client-side, nothing ever touches a 3rd party server.</p>
             <p>"Installed Channels" and "Linked Accounts" are estimated numbers based on the two corresponding addition and removal numbers.</p>
