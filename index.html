@@ -32,13 +32,18 @@
             <section>
                 <label for="stat">Add Line:</label><select id="stat">
                     <option value="">Select data line</option>
+                    <optgroup label="Twitch Data" disabled id="statgroup">
+                    </optgroup>
+                    <optgroup label="Calculated Stats" disabled id="calcgroup">
+                        <option>Installed Channels</option>
+                        <option>Linked Accounts</option>
+                    </optgroup>
                 </select>
             </section>
             <svg width="960" height="500"></svg>
         </section>
         <section id="stats">
             <h2>Stats</h2>
-            <p>Some maths 7 asked me to do:</p>
             <p>Estimated installs: <output id="installs"></p>
             <p>Estimated linked accounts: <output id="linkedAccounts"></p>
             <p>Currently live channels: <output id="liveCount"></p>

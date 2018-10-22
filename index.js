@@ -3,6 +3,10 @@ const ignoredCols = [
         'Extension Name',
         'Extension Client ID'
     ],
+    customCols = [
+        'Installed Channels',
+        'Linked Accounts'
+    ],
     reader = new FileReader(),
     svg = d3.select("svg"),
     margin = {top: 20, right: 20, bottom: 30, left: 50},
@@ -22,7 +26,7 @@ const ignoredCols = [
     lines = g.append('g').attr('class', 'lines'),
     legend = g.append('g').attr('class', 'legend'),
     activeLines = [],
-    getLiveChannels = (clientID, count = 0, cursor) => {
+    getLiveChannels = (clientID, count = 0, cursor = '') => {
         return fetch(`https://api.twitch.tv/extensions/${clientID}/live_activated_channels?cursor=${cursor}`, {
             headers: {
                 "Client-ID": clientID
@@ -62,21 +66,19 @@ reader.addEventListener("load", () => {
             break;
         }
     }
-    const printableCols = data.columns.filter((c) => !ignoredCols.includes(c));
+    const printableCols = data.columns.filter((c) => !ignoredCols.includes(c)).concat(customCols);
     data = data.slice(0, Math.min(lastIndexWithData + 2, data.length));
 
     // calculate maths
     let estimatedInstalls = 0;
     let estimatedLinkedAccounts = 0;
-    for(const row of data) {
+    for(const row of data.reverse()) {
         estimatedInstalls += parseInt(row['Installs'], 10) - parseInt(row['Uninstalls'], 10);
         row['Installed Channels'] = estimatedInstalls;
 
-        estimatedLinkedAccounts += parseInt(row['Unique Account Links'], 10) - parseInt(row['Unique Account Unlinks'], 10);
+        estimatedLinkedAccounts += parseInt(row['Unique Identity Links'], 10) - parseInt(row['Unique Identity Unlinks'], 10);
         row['Linked Accounts'] = estimatedLinkedAccounts;
     }
-    printableCols.push('Installed Channels');
-    printableCols.push('Linked Accounts');
     document.getElementById("installs").value = estimatedInstalls;
     //TODO ensure it's at least current unique active channels
     document.getElementById("linkedAccounts").value = estimatedLinkedAccounts;
@@ -86,16 +88,20 @@ reader.addEventListener("load", () => {
     });
 
     // undraw graphs and all that.
-    const statSelect = document.getElementById("stat");
-    for(const child of statSelect.children) {
+    const statGroup = document.getElementById("statgroup");
+    for(const child of statGroup.children) {
         if(child.value) {
             child.remove();
         }
     }
     for(const column of printableCols) {
-        const opt = new Option(column);
-        statSelect.append(opt);
+        if(!customCols.includes(column)) {
+            const opt = new Option(column);
+            statGroup.append(opt);
+        }
     }
+    statGroup.disabled = false;
+    document.getElementById("calcgroup").disabled = false;
     color.domain(printableCols);
     x.domain(d3.extent(data, (d) => parseTime(d.Date)));
     const mapLine = (d) => line(data.map((p) => ({
@@ -167,6 +173,7 @@ reader.addEventListener("load", () => {
                 updateGraph();
             });
     };
+    const statSelect = document.getElementById("stat");
     statSelect.addEventListener("change", () => {
         if(!statSelect.value || activeLines.length >= d3.schemeCategory10.length || activeLines.includes(statSelect.value)) {
             return;
