@@ -46,13 +46,17 @@ reader.addEventListener("load", () => {
     data = data.slice(0, Math.min(lastIndexWithData + 2, data.length));
 
     // calculate maths
-    const installs = document.getElementById("installs");
     let estimatedInstalls = 0;
+    let estimatedLinkedAccounts = 0;
     for(const row of data) {
         estimatedInstalls += parseInt(row['Installs'], 10) - parseInt(row['Uninstalls'], 10);
         row['Installed Channels'] = estimatedInstalls;
+
+        estimatedLinkedAccounts += parseInt(row['Unique Account Links'], 10) - parseInt(row['Unique Account Unlinks'], 10);
+        row['Linked Accounts'] = estimatedLinkedAccounts;
     }
-    installs.value = estimatedInstalls;
+    document.getElementById("installs").value = estimatedInstalls;
+    document.getElementById("linkedAccounts").value = estimatedLinkedAccounts;
     //TODO ensure it's at least current unique active channels
 
     // undraw graphs and all that.
