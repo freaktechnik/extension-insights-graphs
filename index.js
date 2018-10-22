@@ -50,6 +50,7 @@ reader.addEventListener("load", () => {
     let estimatedInstalls = 0;
     for(const row of data) {
         estimatedInstalls += parseInt(row['Installs'], 10) - parseInt(row['Uninstalls'], 10);
+        row['Installed Channels'] = estimatedInstalls;
     }
     installs.value = estimatedInstalls;
     //TODO ensure it's at least current unique active channels
