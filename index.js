@@ -55,9 +55,11 @@ reader.addEventListener("load", () => {
         estimatedLinkedAccounts += parseInt(row['Unique Account Links'], 10) - parseInt(row['Unique Account Unlinks'], 10);
         row['Linked Accounts'] = estimatedLinkedAccounts;
     }
+    printableCols.push('Installed Channels');
+    printableCols.push('Linked Accounts');
     document.getElementById("installs").value = estimatedInstalls;
-    document.getElementById("linkedAccounts").value = estimatedLinkedAccounts;
     //TODO ensure it's at least current unique active channels
+    document.getElementById("linkedAccounts").value = estimatedLinkedAccounts;
 
     // undraw graphs and all that.
     const statSelect = document.getElementById("stat");
