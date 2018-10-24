@@ -169,19 +169,21 @@ reader.addEventListener("load", () => {
                 .attr('d', mapLine);
         lGroup.attr('d', mapLine)
 
+        // Add dots, first add the groups for dots per line
         const dGroup = dots.selectAll('.dot-group')
             .data(activeLines, (d) => d);
         dGroup.exit().remove();
-        const dInst = dGroup.enter()
+        dGroup.enter()
             .append('g')
                 .attr('class', 'dot-group')
-                .selectAll('circle')
-                    .data((d) => data.map((p) => ({
-                        Date: parseTime(p.Date),
-                        value: parseFloat(p[d]),
-                        color: color(d),
-                        label: d
-                    })));
+        // Need to start from scratch to get added/removed nodes. Actually add the dots now.
+        const dInst = dots.selectAll('.dot-group').selectAll('circle')
+            .data((d) => data.map((p) => ({
+                Date: parseTime(p.Date),
+                value: parseFloat(p[d]),
+                color: color(d),
+                label: d
+            })));
         dInst.exit().remove();
         dInst.enter()
             .append('circle')
@@ -199,8 +201,8 @@ reader.addEventListener("load", () => {
                 .append('title')
                     .text((d) => dateFormatter(d.Date) + " - " + d.label + ": " + statFormatter.format(d.value))
         dInst
-            .attr('cx', (d) => x(d.value))
-            .attr('cy', (d) => y(d.Date))
+            .attr('cx', (d) => x(d.Date))
+            .attr('cy', (d) => y(d.value))
 
         xAxis.call(d3.axisBottom(x));
         yAxis.call(d3.axisLeft(y));
