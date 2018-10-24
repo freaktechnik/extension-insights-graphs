@@ -3,10 +3,29 @@ const ignoredCols = [
         'Extension Name',
         'Extension Client ID'
     ],
-    customCols = [
-        'Installed Channels',
-        'Linked Accounts'
-    ],
+    customColDefinitions = {
+        "Installed Channels": {
+            left: "Installs",
+            right: "Uninstalls",
+            operation: "+"
+        },
+        "Linked Accounts": {
+            left: "Unique Identity Links",
+            right: "Unique Identity Unlinks",
+            operation: "+"
+        },
+        "Install Rate": {
+            left: "Installs",
+            right: "Extension Details Page Visits",
+            operation: "/"
+        },
+        "Renders per Viewer": {
+            left: "Renders",
+            right: "Unique Viewers",
+            operation: "/"
+        }
+    },
+    customCols = Object.keys(customColDefinitions),
     reader = new FileReader(),
     svg = d3.select("svg"),
     margin = {top: 20, right: 20, bottom: 30, left: 50},
@@ -70,18 +89,32 @@ reader.addEventListener("load", () => {
     data = data.slice(0, Math.min(lastIndexWithData + 2, data.length));
 
     // calculate maths
-    let estimatedInstalls = 0;
-    let estimatedLinkedAccounts = 0;
-    for(const row of data.reverse()) {
-        estimatedInstalls += parseInt(row['Installs'], 10) - parseInt(row['Uninstalls'], 10);
-        row['Installed Channels'] = estimatedInstalls;
-
-        estimatedLinkedAccounts += parseInt(row['Unique Identity Links'], 10) - parseInt(row['Unique Identity Unlinks'], 10);
-        row['Linked Accounts'] = estimatedLinkedAccounts;
+    const customColData = {};
+    for(const col of customCols) {
+      customColData[col] = 0;
     }
-    document.getElementById("installs").value = estimatedInstalls;
+    for(const row of data.reverse()) {
+        for(const col of customCols) {
+            const definition = customColDefinitions[col];
+            const left = parseInt(row[definition.left], 10);
+            const right = parseInt(row[definition.right], 10);
+            switch(definition.operation) {
+                case "+":
+                    customColData[col] += left - right;
+                    break;
+                case "/":
+                    customColData[col] = left / right;
+                    break;
+            }
+        }
+
+        for(const col of customCols) {
+            row[col] = customColData[col];
+        }
+    }
+    document.getElementById("installs").value = customColData['Installed Channels'];
     //TODO ensure it's at least current unique active channels
-    document.getElementById("linkedAccounts").value = estimatedLinkedAccounts;
+    document.getElementById("linkedAccounts").value = customColData['Linked Accounts'];
 
     getLiveChannels(data[0]['Extension Client ID']).then((count) => {
         document.getElementById("liveCount").value = count;
@@ -188,6 +221,7 @@ reader.addEventListener("load", () => {
         }
         activeLines.push(statSelect.value);
         updateGraph();
+        statSelect.value = '';
     });
 });
 
