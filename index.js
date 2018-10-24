@@ -25,6 +25,11 @@ const ignoredCols = [
             operation: "/"
         }
     },
+    stats = {
+        installs: "Installed Channels",
+        active: "Unique Active Channels",
+        linkedAccounts: "Linked Accounts"
+    },
     customCols = Object.keys(customColDefinitions),
     reader = new FileReader(),
     svg = d3.select("svg"),
@@ -45,6 +50,7 @@ const ignoredCols = [
     lines = g.append('g').attr('class', 'lines'),
     legend = g.append('g').attr('class', 'legend'),
     activeLines = [],
+    statFormatter = new Intl.NumberFormat(),
     getLiveChannels = (clientID, count = 0, cursor = '') => {
         return fetch(`https://api.twitch.tv/extensions/${clientID}/live_activated_channels?cursor=${cursor}`, {
             headers: {
@@ -112,12 +118,15 @@ reader.addEventListener("load", () => {
             row[col] = customColData[col];
         }
     }
-    document.getElementById("installs").value = customColData['Installed Channels'];
-    //TODO ensure it's at least current unique active channels
-    document.getElementById("linkedAccounts").value = customColData['Linked Accounts'];
+    for(const stat in stats) {
+        if(stats.hasOwnProperty(stat)) {
+            document.getElementById(stat).value = statFormatter.format(data[data.length - 1][stats[stat]]);
+        }
+    }
+    //TODO ensure installs are at least current unique active channels
 
     getLiveChannels(data[0]['Extension Client ID']).then((count) => {
-        document.getElementById("liveCount").value = count;
+        document.getElementById("liveCount").value = statFormatter.format(count);
     });
 
     // undraw graphs and all that.
