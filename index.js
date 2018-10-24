@@ -49,8 +49,10 @@ const ignoredCols = [
     line = d3.line().x((d) => x(d.Date)).y((d) => y(d.value)),
     lines = g.append('g').attr('class', 'lines'),
     legend = g.append('g').attr('class', 'legend'),
+    dots = g.append('g').attr('class', 'dots'),
     activeLines = [],
     statFormatter = new Intl.NumberFormat(),
+    dateFormatter = d3.timeFormat('%Y-%m-%d')
     getLiveChannels = (clientID, count = 0, cursor = '') => {
         return fetch(`https://api.twitch.tv/extensions/${clientID}/live_activated_channels?cursor=${cursor}`, {
             headers: {
@@ -158,14 +160,48 @@ reader.addEventListener("load", () => {
         lGroup.enter()
             .append("path")
                 .attr('class', 'line-group')
-                .attr("fill", "none")
-                .attr("stroke", color)
+                .style("fill", "none")
+                .style("stroke", color)
                 .attr("stroke-linejoin", "round")
                 .attr("stroke-linecap", "round")
                 .attr("stroke-width", 1.5)
                 .attr("data-legend", (d) => d)
                 .attr('d', mapLine);
         lGroup.attr('d', mapLine)
+
+        const dGroup = dots.selectAll('.dot-group')
+            .data(activeLines, (d) => d);
+        dGroup.exit().remove();
+        const dInst = dGroup.enter()
+            .append('g')
+                .attr('class', 'dot-group')
+                .selectAll('circle')
+                    .data((d) => data.map((p) => ({
+                        Date: parseTime(p.Date),
+                        value: parseFloat(p[d]),
+                        color: color(d),
+                        label: d
+                    })));
+        dInst.exit().remove();
+        dInst.enter()
+            .append('circle')
+                .attr('r', 5)
+                .attr('cx', (d) => x(d.Date))
+                .attr('cy', (d) => y(d.value))
+                .style('fill', 'none')
+                .style('pointer-events', 'all')
+                .on('mouseover', function(d) {
+                    d3.select(this).style('fill', d.color);
+                })
+                .on('mouseout', function(d) {
+                    d3.select(this).style('fill', 'none');
+                })
+                .append('title')
+                    .text((d) => dateFormatter(d.Date) + " - " + d.label + ": " + statFormatter.format(d.value))
+        dGroup
+            .selectAll('circle')
+            .attr('cx', (d) => x(d.value))
+            .attr('cy', (d) => y(d.Date))
 
         xAxis.call(d3.axisBottom(x));
         yAxis.call(d3.axisLeft(y));
