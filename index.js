@@ -199,7 +199,7 @@ reader.addEventListener("load", () => {
                     d3.select(this).style('fill', 'none');
                 })
                 .append('title')
-                    .text((d) => dateFormatter(d.Date) + " - " + d.label + ": " + statFormatter.format(d.value))
+                    .text((d) => `${dateFormatter(d.Date)} - ${d.label}: ${statFormatter.format(d.value)}`)
         dInst
             .attr('cx', (d) => x(d.Date))
             .attr('cy', (d) => y(d.value))
@@ -213,14 +213,14 @@ reader.addEventListener("load", () => {
         const newLegends = legends.enter()
                 .append('g')
                 .attr('class', 'legend-entry')
-                .attr('transform', (d, i) => `translate(0,${i * 20})`)
+                .attr('transform', (d, i) => `translate(2,${i * 20})`)
                 .on('mouseover', function(d) {
                     d3.select(this).select('.remove').style('opacity', '1.0');
                 })
                 .on('mouseout', function(d) {
                     d3.select(this).select('.remove').style('opacity', '0.0');
                 });
-        legends.attr('transform', (d, i) => `translate(0,${i * 20})`);
+        legends.attr('transform', (d, i) => `translate(2,${i * 20})`);
         newLegends.append('rect')
             .attr('x', 0)
             .attr('y', 0)
