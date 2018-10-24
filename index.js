@@ -199,7 +199,7 @@ reader.addEventListener("load", () => {
                 activeLines.splice(activeLines.indexOf(d), 1);
                 if(activeLines.length) {
                     y.domain([
-                        d3.min(activeLines, (e) => d3.min(data, (p) => parseFloat(p[e]))),
+                        Math.min(0, d3.min(activeLines, (e) => d3.min(data, (p) => parseFloat(p[e])))),
                         d3.max(activeLines, (e) => d3.max(data, (p) => parseFloat(p[e])))
                     ]);
                 }
@@ -217,7 +217,7 @@ reader.addEventListener("load", () => {
             y.domain([ Math.min(0, yExtent[0], oldExtent[0]), Math.max(yExtent[1], oldExtent[1]) ]);
         }
         else {
-            y.domain(yExtent);
+            y.domain([ Math.min(0, yExtent[0]), yExtent[1] ]);
         }
         activeLines.push(statSelect.value);
         updateGraph();
