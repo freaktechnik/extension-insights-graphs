@@ -198,8 +198,7 @@ reader.addEventListener("load", () => {
                 })
                 .append('title')
                     .text((d) => dateFormatter(d.Date) + " - " + d.label + ": " + statFormatter.format(d.value))
-        dGroup
-            .selectAll('circle')
+        dInst
             .attr('cx', (d) => x(d.value))
             .attr('cy', (d) => y(d.Date))
 
